@@ -2,7 +2,7 @@
 id: MEM-0001
 title: Zero runtime dependencies
 kind: constraint
-status: proposed
+status: accepted
 scope:
   - package.json
   - lib/**
@@ -17,6 +17,9 @@ evidence:
 recorded: 2026-11-02
 source:
   by: agent
+reviewed:
+  by: Semeton Balogun
+  on: 2026-11-02
 ---
 
 # Zero runtime dependencies
