@@ -1,6 +1,6 @@
 {
   "name": "@semeton/repo-memory",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Repository memory for coding agents: decision records that live in git, are checked against the code in CI, and only become rules after human review.",
   "keywords": [
     "adr",
