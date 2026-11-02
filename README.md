@@ -6,6 +6,8 @@ Decision records for codebases that coding agents work in. They live in git, are
 npx @semeton/repo-memory init --ci github
 ```
 
+New here? Follow the [ten-minute getting-started guide](docs/GETTING-STARTED.md).
+
 Zero runtime dependencies. Node 18+. Works with any agent (Claude Code, Codex, Cursor, Copilot) and any language; PHP class resolution is built in.
 
 ## The problem it solves
