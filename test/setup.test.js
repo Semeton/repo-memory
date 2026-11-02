@@ -3,7 +3,7 @@
 const assert = require("node:assert/strict");
 const fs = require("fs");
 const path = require("path");
-const { test, tmpRepo } = require("./helpers");
+const { test, tmpRepo, record, recordFile } = require("./helpers");
 const { parse, splitFrontmatter } = require("../lib/yaml");
 const { version } = require("../package.json");
 
@@ -81,6 +81,71 @@ test("import converts a JSONL log without inventing reviews", async (t) => {
   const check = await repo.run(["check"]);
   assert.equal(check.code, 0, check.out);
   assert.match((await repo.run(["import", path.join(repo.dir, "old.jsonl")])).err, /already exists.*skipped/);
+});
+
+test("import turns agent-contract's free-form decisions into proposals", async (t) => {
+  const log = [
+    { ts: "2026-10-14T10:25:00+01:00", decision: "Reset and invite links use opaque 32-byte random tokens looked up by value; set-user-password derives the user from the token, never from a client id", why: "Reset JWTs had the same {id} shape Auth.user accepts: two account-takeover paths", alternatives: "Keep JWTs with a separate secret and typ claim" },
+    { ts: "2026-10-14T10:25:00+01:00", decision: "Email links are built from APP_URL, not Referer/Origin", why: "Referer is attacker-controlled" },
+    { ts: "2026-10-15T09:00:00Z", role: "generator", task: "add invite flow", provider: "echo", model: "m", tokens: { used: 1, limit: 2, pct: 50 } },
+    { ts: "2026-10-16", decision: "Email links are built from APP_URL, not Referer/Origin" },
+    { ts: "bad", decision: "Queue retries are capped at 3", alternatives: ["5 retries", "exponential backoff without a cap"], files: ["app/Jobs/SendInvite.php"] },
+    { note: "something else entirely" },
+  ].map((x) => JSON.stringify(x)).join("\n");
+  const repo = tmpRepo({ ".agent/memory/decisions.jsonl": log, [recordFile("MEM-0003", "Existing")]: record({ id: "MEM-0003", title: "Existing", evidence: "  - kind: path\n    path: .agent" }) });
+  t.after(() => repo.cleanup());
+  const r = await repo.run(["import", path.join(repo.dir, ".agent/memory/decisions.jsonl")]);
+  assert.equal(r.code, 0, r.err);
+  assert.match(r.err, /1 agent-contract run entry skipped/);
+  assert.match(r.err, /1 duplicate decision skipped/);
+  assert.match(r.err, /3 free-form decisions imported as proposals \(MEM-0004…MEM-0006\)/);
+  assert.match(r.err, /line 6: neither a record/);
+
+  const byId = (id) => "docs/decisions/" + fs.readdirSync(path.join(repo.dir, "docs/decisions")).find((f) => f.startsWith(id + "-"));
+  const read = (f) => parse(splitFrontmatter(repo.read(f)).yaml);
+  const first = byId("MEM-0004");
+  const fm = read(first);
+  assert.equal(fm.status, "proposed");
+  assert.equal(fm.source.by, "agent");
+  assert.equal(fm.recorded, "2026-10-14");
+  assert.equal(fm.title, "Reset and invite links use opaque 32-byte random tokens looked up by value");
+  const body = repo.read(first);
+  assert.match(body, /## Rule\n\nReset and invite links use opaque 32-byte random tokens looked up by value; set-user-password derives/);
+  assert.match(body, /## Why\n\nReset JWTs had the same/);
+  assert.match(body, /## Alternatives considered\n\nKeep JWTs with a separate secret/);
+
+  const third = repo.read(byId("MEM-0006"));
+  assert.match(third, /## Why\n\nNot recorded in the original log/);
+  assert.match(third, /## Alternatives considered\n\n- 5 retries\n- exponential backoff without a cap/);
+  assert.match(third, /## Original log fields\n\n```json\n\{\n  "files": \[/);
+  assert.match(read(byId("MEM-0006")).recorded, /^\d{4}-\d{2}-\d{2}$/);
+
+  const check = await repo.run(["check"]);
+  assert.equal(check.code, 0, check.out);
+  assert.match(check.out, /PROPOSED\s+MEM-0004/);
+  // A human can accept one as-is (warnings, not errors), ideally after adding scope.
+  assert.equal((await repo.run(["accept", "MEM-0005"])).code, 0);
+});
+
+test("import skips log lines an existing record already cites", async (t) => {
+  const log = ["First decision", "Second decision", "Third decision"].map((d, i) => JSON.stringify({ ts: `2026-10-1${i}`, decision: d, why: "w" })).join("\n");
+  const cites = record({ id: "MEM-0001", title: "Second, rewritten", status: "proposed", source: "agent" }).replace("  by: agent", "  by: agent\n  ref: .agent/memory/decisions.jsonl line 2 (2026-10-11)");
+  const repo = tmpRepo({ ".agent/memory/decisions.jsonl": log, [recordFile("MEM-0001", "Second rewritten")]: cites });
+  t.after(() => repo.cleanup());
+  const r = await repo.run(["import", path.join(repo.dir, ".agent/memory/decisions.jsonl")]);
+  assert.equal(r.code, 0, r.err);
+  assert.match(r.err, /1 decision skipped: already converted/);
+  assert.match(r.err, /2 free-form decisions imported as proposals \(MEM-0002…MEM-0003\)/);
+  const again = await repo.run(["import", path.join(repo.dir, ".agent/memory/decisions.jsonl")]);
+  assert.match(again.err, /3 decisions skipped: already converted/, "a second import adds nothing");
+});
+
+test("import titles don't break on abbreviations", async (t) => {
+  const log = JSON.stringify({ ts: "2026-10-17", decision: "Requirements group by top-level section (e.g. A.5) plus the second level; deeper nodes roll up", why: "w" });
+  const repo = tmpRepo({ "log.jsonl": log });
+  t.after(() => repo.cleanup());
+  const r = await repo.run(["import", path.join(repo.dir, "log.jsonl"), "--dry-run"]);
+  assert.match(r.out, /^title: Requirements group by top-level section \(e\.g\. A\.5\) plus the second level$/m);
 });
 
 test("the CLI binary runs", () => {

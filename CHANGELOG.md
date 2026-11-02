@@ -6,6 +6,20 @@ All notable changes to `@semeton/repo-memory`. The format follows [Keep a Change
 
 ### Added
 
+- `import` reads agent-contract's pre-0.10 `decisions.jsonl`: free-form `{ts, decision, why, alternatives}` entries become proposals (rule, why, alternatives considered), run entries are skipped, duplicates are dropped, and lines an existing record already cites in `source.ref` are skipped, so a re-import adds nothing.
+
+### Fixed
+
+- Titles derived on import no longer break at abbreviations such as "e.g." and "i.e.".
+
+## [0.1.3] - 2026-11-03
+
+No functional changes; version bump only.
+
+## [0.1.2] - 2026-11-02
+
+### Added
+
 - `init` notices agent-contract (`.agent/manifest.yaml`) and says to run `agent-contract update` so its shim points agents at repo-memory.
 - README section on using repo-memory with agent-contract.
 
@@ -33,5 +47,8 @@ Initial release.
 - `init` with an optional GitHub Actions workflow that pins the evaluator version, and `import` for JSONL decision logs.
 - Zero runtime dependencies; Node 18 or newer.
 
+[Unreleased]: https://github.com/Semeton/repo-memory/compare/v0.1.3...HEAD
+[0.1.3]: https://github.com/Semeton/repo-memory/compare/v0.1.2...v0.1.3
+[0.1.2]: https://github.com/Semeton/repo-memory/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/Semeton/repo-memory/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/Semeton/repo-memory/releases/tag/v0.1.0
