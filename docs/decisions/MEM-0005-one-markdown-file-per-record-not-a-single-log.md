@@ -2,7 +2,7 @@
 id: MEM-0005
 title: One Markdown file per record, not a single log
 kind: rejected
-status: proposed
+status: accepted
 scope:
   - lib/records.js
   - docs/decisions/**
@@ -10,6 +10,9 @@ evidence: []
 recorded: 2026-11-02
 source:
   by: agent
+reviewed:
+  by: Semeton Balogun
+  on: 2026-11-02
 ---
 
 # One Markdown file per record, not a single log

@@ -2,7 +2,7 @@
 id: MEM-0004
 title: Exit codes and --json output are a public contract
 kind: convention
-status: proposed
+status: accepted
 scope:
   - lib/cli.js
   - lib/commands/**
@@ -18,6 +18,9 @@ evidence:
 recorded: 2026-11-02
 source:
   by: agent
+reviewed:
+  by: Semeton Balogun
+  on: 2026-11-02
 ---
 
 # Exit codes and --json output are a public contract

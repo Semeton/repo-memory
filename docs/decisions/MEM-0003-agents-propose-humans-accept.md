@@ -2,7 +2,7 @@
 id: MEM-0003
 title: Agents propose, humans accept
 kind: decision
-status: proposed
+status: accepted
 scope:
   - lib/commands/write.js
   - lib/context.js
@@ -19,6 +19,9 @@ evidence:
 recorded: 2026-11-02
 source:
   by: agent
+reviewed:
+  by: Semeton Balogun
+  on: 2026-11-02
 ---
 
 # Agents propose, humans accept

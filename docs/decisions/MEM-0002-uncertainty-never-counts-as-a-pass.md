@@ -2,7 +2,7 @@
 id: MEM-0002
 title: Uncertainty never counts as a pass
 kind: constraint
-status: proposed
+status: accepted
 scope:
   - lib/evidence.js
   - lib/health.js
@@ -16,6 +16,9 @@ evidence:
 recorded: 2026-11-02
 source:
   by: agent
+reviewed:
+  by: Semeton Balogun
+  on: 2026-11-02
 ---
 
 # Uncertainty never counts as a pass
