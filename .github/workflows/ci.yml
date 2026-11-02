@@ -1,0 +1,38 @@
+name: ci
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node: [18, 20, 22]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm test
+  records:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # This repo's own decision records, checked by the code under test. That is a
+      # dogfood check, not a trust gate: a PR here can change the evaluator and the
+      # records together. The gate is review (CODEOWNERS on docs/decisions/), and the
+      # weakened-record report below makes record edits visible in the PR.
+      - run: node bin/repo-memory.js check --run --since "origin/${GITHUB_BASE_REF:-main}"
+        if: github.event_name == 'pull_request'
+      - run: node bin/repo-memory.js check --run
+        if: github.event_name != 'pull_request'

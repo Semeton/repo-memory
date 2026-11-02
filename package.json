@@ -1,0 +1,49 @@
+{
+  "name": "@semeton/repo-memory",
+  "version": "0.1.0",
+  "description": "Repository memory for coding agents: decision records that live in git, are checked against the code in CI, and only become rules after human review.",
+  "keywords": [
+    "adr",
+    "architecture-decision-records",
+    "agent",
+    "ai",
+    "claude-code",
+    "codex",
+    "copilot",
+    "cursor",
+    "memory",
+    "decision-log",
+    "ci"
+  ],
+  "bin": {
+    "repo-memory": "bin/repo-memory.js"
+  },
+  "main": "./lib/index.js",
+  "files": [
+    "bin",
+    "lib",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node --test",
+    "check": "node bin/repo-memory.js check",
+    "prepublishOnly": "node --test && node bin/repo-memory.js check"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Semeton/repo-memory.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Semeton/repo-memory/issues"
+  },
+  "homepage": "https://github.com/Semeton/repo-memory#readme",
+  "author": "semeton",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -1,0 +1,19 @@
+name: publish
+on:
+  push:
+    tags: ["v*"]
+permissions:
+  id-token: write # lets npm verify this workflow (trusted publishing); no npm token is stored
+  contents: read
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+      - name: Tag matches package.json version
+        run: test "v$(node -p "require('./package.json').version")" = "$GITHUB_REF_NAME"
+      - run: npm publish --provenance --access public # prepublishOnly runs the tests and the record check

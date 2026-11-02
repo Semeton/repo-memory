@@ -1,0 +1,4 @@
+# Decision records are rules for every contributor, human or agent. A change to one
+# is reviewed by the maintainer, not merged alongside code on a green build.
+/docs/decisions/ @Semeton
+/.github/ @Semeton
