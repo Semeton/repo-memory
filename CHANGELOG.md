@@ -2,6 +2,13 @@
 
 All notable changes to `@semeton/repo-memory`. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses [Semantic Versioning](https://semver.org/): while the version is 0.x, a minor release may change behaviour. Exit codes and the `--json` shape (`version: 1`) change only in a major release.
 
+## [Unreleased]
+
+### Added
+
+- `init` notices agent-contract (`.agent/manifest.yaml`) and says to run `agent-contract update` so its shim points agents at repo-memory.
+- README section on using repo-memory with agent-contract.
+
 ## [0.1.1] - 2026-11-02
 
 First release published from GitHub Actions through npm trusted publishing, with a provenance attestation linking the package to the commit and workflow run that built it.

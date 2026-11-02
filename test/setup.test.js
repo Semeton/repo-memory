@@ -24,6 +24,18 @@ test("init is idempotent and pins the evaluator version in CI", async (t) => {
   assert.equal((await repo.run(["check"])).code, 0, "an empty repo passes");
 });
 
+test("init points out agent-contract when it is installed", async (t) => {
+  const repo = tmpRepo({ ".agent/manifest.yaml": "version: 1\n" });
+  t.after(() => repo.cleanup());
+  const r = await repo.run(["init"]);
+  assert.equal(r.code, 0, r.err);
+  assert.match(r.out, /agent-contract detected: both tools keep decisions in docs\/decisions\//);
+  assert.match(r.out, /Run `agent-contract update` \(0\.10 or newer\)/);
+  const plain = tmpRepo();
+  t.after(() => plain.cleanup());
+  assert.doesNotMatch((await plain.run(["init"])).out, /agent-contract detected/);
+});
+
 test("config is validated", async (t) => {
   const repo = tmpRepo();
   t.after(() => repo.cleanup());

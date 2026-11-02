@@ -158,6 +158,17 @@ A record with broken evidence is still exported, but with a warning telling the 
 - **Retrieval is path globs.** That is enough for dozens of records, and possibly a few hundred. Beyond that, or when relevance can't be expressed as a path, you need a real index.
 - **The agent-session check can be bypassed.** Review is the gate (see above).
 
+## With agent-contract
+
+[agent-contract](https://github.com/Semeton/agent-contract) and repo-memory share `docs/decisions/` and don't depend on each other:
+
+- **agent-contract owns the rules for agents** (roles, scopes, merge gate).
+- **repo-memory owns the decision records.**
+
+agent-contract 0.10 and newer detect `repo-memory.json` and tell agents, in the `CLAUDE.md`/`AGENTS.md` shim, to propose decisions with repo-memory. Run `agent-contract update` after `repo-memory init` so the shim picks this up. agent-contract's merge gate (`agent-contract check`) accepts a repo-memory record as the recorded reason for a sensitive change.
+
+agent-contract's `.agent/memory/runs.jsonl` (called `decisions.jsonl` before 0.10) is a log of agent runs, not decisions, so `import` deliberately doesn't read it.
+
 ## Configuration
 
 `repo-memory.json` at the repository root. Every key is optional.
