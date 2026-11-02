@@ -1,10 +1,9 @@
 "use strict";
 
-const test = require("node:test");
 const assert = require("node:assert/strict");
 const fs = require("fs");
 const path = require("path");
-const { tmpRepo, record, recordFile } = require("./helpers");
+const { test, tmpRepo, record, recordFile } = require("./helpers");
 const { parse, splitFrontmatter } = require("../lib/yaml");
 
 const AGENT = { CLAUDECODE: "1" };

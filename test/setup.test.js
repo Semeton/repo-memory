@@ -1,10 +1,9 @@
 "use strict";
 
-const test = require("node:test");
 const assert = require("node:assert/strict");
 const fs = require("fs");
 const path = require("path");
-const { tmpRepo } = require("./helpers");
+const { test, tmpRepo } = require("./helpers");
 const { parse, splitFrontmatter } = require("../lib/yaml");
 const { version } = require("../package.json");
 

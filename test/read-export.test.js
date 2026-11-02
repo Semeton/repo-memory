@@ -1,8 +1,7 @@
 "use strict";
 
-const test = require("node:test");
 const assert = require("node:assert/strict");
-const { tmpRepo, record, recordFile } = require("./helpers");
+const { test, tmpRepo, record, recordFile } = require("./helpers");
 
 function setup(t) {
   const repo = tmpRepo({
